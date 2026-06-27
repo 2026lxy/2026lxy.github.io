@@ -3,733 +3,553 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>✨ 星河漫游 · Starlit Odyssey</title>
+<title>星穹探索 — Cosmic Frontier</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&family=Outfit:wght@200;400;600;800&display=swap');
-
   :root {
-    --bg-deep: #0a0e27;
-    --bg-mid: #131a3a;
-    --accent-1: #e2b6cf;
-    --accent-2: #8ecae6;
-    --accent-3: #ffb4a2;
-    --text-primary: #f0f0f5;
-    --text-muted: #9b9bc4;
-    --card-bg: rgba(255, 255, 255, 0.04);
-    --card-border: rgba(255, 255, 255, 0.08);
+    --bg-deep: #0a0a14;
+    --bg-card: rgba(255,255,255,0.03);
+    --neon-cyan: #00f0ff;
+    --neon-purple: #a855f7;
+    --neon-pink: #ec4899;
+    --neon-gold: #f59e0b;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
   body {
-    font-family: 'Outfit', 'Noto Serif SC', sans-serif;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     background: var(--bg-deep);
     color: var(--text-primary);
     overflow-x: hidden;
-    line-height: 1.6;
+    cursor: default;
   }
 
-  /* ===== 星空背景 ===== */
-  .starfield {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
+  /* ===== Canvas 星空背景 ===== */
+  #starfield {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    z-index: 0; pointer-events: none;
   }
 
-  .starfield::before, .starfield::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 200%; height: 200%;
-    background-image:
-      radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 40% 70%, rgba(226,182,207,0.7), transparent),
-      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.5), transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(142,202,230,0.6), transparent),
-      radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1.5px 1.5px at 33% 85%, rgba(255,180,162,0.5), transparent),
-      radial-gradient(1px 1px at 66% 20%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 15% 55%, rgba(226,182,207,0.4), transparent),
-      radial-gradient(1px 1px at 70% 90%, rgba(142,202,230,0.5), transparent),
-      radial-gradient(1.5px 1.5px at 45% 15%, rgba(255,255,255,0.7), transparent);
-    background-size: 400px 400px;
-    animation: drift 120s linear infinite;
-  }
-
-  .starfield::after {
-    background-size: 300px 300px;
-    opacity: 0.5;
-    animation: drift 80s linear infinite reverse;
-  }
-
-  @keyframes drift {
-    from { transform: translate(0, 0); }
-    to { transform: translate(-400px, -400px); }
-  }
-
-  /* 流星 */
-  .shooting-star {
-    position: fixed;
-    top: 10%;
-    left: 50%;
-    width: 2px;
-    height: 2px;
-    background: white;
-    border-radius: 50%;
-    box-shadow: 0 0 6px white;
-    z-index: 1;
-    opacity: 0;
-    animation: shoot 8s ease-in-out infinite;
-  }
-
-  .shooting-star::before {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 120px;
-    height: 1px;
-    background: linear-gradient(to left, rgba(255,255,255,0.6), transparent);
-  }
-
-  .shooting-star:nth-child(2) { top: 25%; animation-delay: 3s; animation-duration: 6s; }
-  .shooting-star:nth-child(3) { top: 50%; animation-delay: 5s; animation-duration: 10s; }
-
-  @keyframes shoot {
-    0% { opacity: 0; transform: translate(0, 0) rotate(-35deg); }
-    5% { opacity: 1; }
-    20% { opacity: 1; }
-    30% { opacity: 0; transform: translate(-400px, 280px) rotate(-35deg); }
-    100% { opacity: 0; transform: translate(-400px, 280px) rotate(-35deg); }
-  }
-
-  /* ===== 导航 ===== */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 3rem;
-    backdrop-filter: blur(20px);
-    background: rgba(10, 14, 39, 0.4);
-    border-bottom: 1px solid var(--card-border);
-  }
-
-  .logo {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    transition: color 0.3s, transform 0.3s;
-    position: relative;
-  }
-
-  .nav-links a:hover {
-    color: var(--text-primary);
-  }
-
-  .nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0; height: 1px;
-    background: var(--accent-2);
-    transition: width 0.3s ease;
-  }
-
-  .nav-links a:hover::after { width: 100%; }
-
-  /* ===== Hero ===== */
-  .hero {
-    position: relative;
-    z-index: 2;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .hero-tag {
-    font-size: 0.8rem;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    color: var(--accent-2);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.2s forwards;
-  }
-
-  .hero h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(2.8rem, 8vw, 5.5rem);
-    font-weight: 700;
-    line-height: 1.15;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.4s forwards;
-  }
-
-  .hero h1 .gradient-text {
-    background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 50%, var(--accent-3) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero p {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    max-width: 540px;
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.6s forwards;
-  }
-
-  .hero-cta {
-    display: flex;
-    gap: 1.2rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.8s forwards;
-  }
-
-  .btn {
-    padding: 0.9rem 2.2rem;
-    border-radius: 2px;
-    font-size: 0.85rem;
-    letter-spacing: 1.5px;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: 600;
+  /* ===== 导航栏 ===== */
+  .navbar {
+    position: fixed; top:0; width:100%; z-index:100;
+    padding: 16px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(10,10,20,0.65);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
   }
+  .navbar.scrolled {
+    padding: 10px 40px;
+    background: rgba(10,10,20,0.85);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+  .nav-logo {
+    font-size: 1.5rem; font-weight: 700; letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-links { display:flex; gap:32px; list-style:none; }
+  .nav-links a {
+    color: var(--text-secondary); text-decoration: none;
+    font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;
+    transition: color 0.3s; position: relative;
+  }
+  .nav-links a:hover { color: var(--neon-cyan); }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left:0; width:0; height:1px;
+    background: var(--neon-cyan); transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width:100%; }
 
+  /* ===== 主体容器 ===== */
+  .main-content { position:relative; z-index:1; }
+
+  /* ===== 英雄区 ===== */
+  .hero {
+    min-height: 100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding: 120px 40px 80px; text-align:center;
+  }
+  .hero-badge {
+    display:inline-block; padding: 6px 20px;
+    border: 1px solid rgba(168,85,247,0.4);
+    border-radius: 50px; font-size:0.8rem; letter-spacing:2px;
+    color: var(--neon-purple); margin-bottom:32px;
+    animation: badgePulse 3s ease-in-out infinite;
+    backdrop-filter: blur(10px);
+  }
+  @keyframes badgePulse {
+    0%,100% { border-color:rgba(168,85,247,0.4); box-shadow:0 0 0 rgba(168,85,247,0); }
+    50% { border-color:rgba(168,85,247,0.8); box-shadow:0 0 24px rgba(168,85,247,0.2); }
+  }
+  .hero-title {
+    font-size: clamp(3rem, 7vw, 6rem); font-weight: 800;
+    line-height: 1.1; margin-bottom: 24px;
+  }
+  .hero-title .line1 {
+    display:block;
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #e2e8f0 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-title .line2 {
+    display:block;
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 40%, var(--neon-pink) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; background-size:200% 200%;
+    animation: gradientShift 4s ease-in-out infinite;
+  }
+  @keyframes gradientShift {
+    0%,100% { background-position:0% 50%; }
+    50% { background-position:100% 50%; }
+  }
+  .hero-subtitle {
+    font-size: 1.15rem; color: var(--text-secondary);
+    max-width: 560px; line-height: 1.7; margin-bottom:48px;
+  }
+  .hero-cta {
+    display:flex; gap:16px; flex-wrap:wrap; justify-content:center;
+  }
   .btn-primary {
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
-    color: var(--bg-deep);
-    border: none;
+    padding: 14px 36px; border:none; border-radius:50px;
+    background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+    color:#fff; font-size:1rem; font-weight:600; letter-spacing:1px;
+    cursor:pointer; transition: all 0.3s; text-decoration:none;
+    box-shadow: 0 4px 24px rgba(168,85,247,0.35);
   }
-
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(226, 182, 207, 0.3);
+    box-shadow: 0 8px 36px rgba(168,85,247,0.5);
+  }
+  .btn-outline {
+    padding: 14px 36px; border:1px solid rgba(255,255,255,0.2); border-radius:50px;
+    background: transparent; color: var(--text-primary);
+    font-size:1rem; font-weight:600; letter-spacing:1px;
+    cursor:pointer; transition: all 0.3s; text-decoration:none;
+    backdrop-filter: blur(10px);
+  }
+  .btn-outline:hover {
+    border-color: var(--neon-cyan); color: var(--neon-cyan);
+    box-shadow: 0 0 24px rgba(0,240,255,0.15);
   }
 
-  .btn-ghost {
-    background: transparent;
-    color: var(--text-primary);
-    border: 1px solid var(--card-border);
+  /* ===== 滚动指示器 ===== */
+  .scroll-indicator {
+    position: absolute; bottom:40px; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    animation: float 2.5s ease-in-out infinite;
+  }
+  .scroll-indicator span { font-size:0.75rem; letter-spacing:2px; color:var(--text-secondary); }
+  .scroll-mouse {
+    width:24px; height:38px; border:2px solid rgba(255,255,255,0.3); border-radius:12px;
+    display:flex; justify-content:center; padding-top:6px;
+  }
+  .scroll-dot {
+    width:4px; height:8px; background:var(--neon-cyan); border-radius:2px;
+    animation: scrollDot 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollDot {
+    0% { transform:translateY(0); opacity:1; }
+    100% { transform:translateY(12px); opacity:0; }
+  }
+  @keyframes float {
+    0%,100% { transform:translateX(-50%) translateY(0); }
+    50% { transform:translateX(-50%) translateY(-10px); }
   }
 
-  .btn-ghost:hover {
-    border-color: var(--accent-2);
-    color: var(--accent-2);
+  /* ===== 通用区块 ===== */
+  .section {
+    padding: 100px 40px; max-width:1200px; margin:0 auto;
+    position:relative; z-index:1;
   }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* 滚动提示 */
-  .scroll-hint {
-    position: absolute;
-    bottom: 2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    animation: bounce 2s infinite;
-  }
-
-  .scroll-hint::after {
-    content: '';
-    display: block;
-    width: 1px;
-    height: 30px;
-    background: linear-gradient(to bottom, var(--text-muted), transparent);
-    margin: 0.5rem auto 0;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(8px); }
-  }
-
-  /* ===== Section 通用 ===== */
-  section {
-    position: relative;
-    z-index: 2;
-    padding: 7rem 3rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
   .section-label {
-    font-size: 0.75rem;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--accent-2);
-    margin-bottom: 1rem;
+    font-size:0.8rem; letter-spacing:3px; text-transform:uppercase;
+    color: var(--neon-cyan); margin-bottom:12px;
   }
-
   .section-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
-    line-height: 1.2;
+    font-size: clamp(2rem, 4vw, 3rem); font-weight:700;
+    margin-bottom:16px;
   }
-
   .section-desc {
-    color: var(--text-muted);
-    font-size: 1rem;
-    max-width: 500px;
-    margin-bottom: 3.5rem;
+    color: var(--text-secondary); max-width:520px; line-height:1.7; margin-bottom:56px;
   }
 
   /* ===== 卡片网格 ===== */
   .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
+    gap:24px;
   }
-
   .card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 4px;
-    padding: 2.5rem;
-    transition: all 0.4s ease;
-    position: relative;
-    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px; padding: 40px 32px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    transition: all 0.4s ease; position:relative; overflow:hidden;
+    cursor: default;
   }
-
   .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 2px;
-    background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s ease;
+    content: ''; position:absolute; top:0; left:0; width:100%; height:100%;
+    background: radial-gradient(circle at 50% 0%, rgba(168,85,247,0.08) 0%, transparent 70%);
+    opacity:0; transition: opacity 0.4s;
   }
-
+  .card:hover::before { opacity:1; }
   .card:hover {
     transform: translateY(-6px);
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(168,85,247,0.3);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 40px rgba(168,85,247,0.08);
   }
-
-  .card:hover::before { transform: scaleX(1); }
-
   .card-icon {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
+    width:52px; height:52px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem; margin-bottom:24px;
+  }
+  .card-icon.cyan { background:rgba(0,240,255,0.1); color:var(--neon-cyan); }
+  .card-icon.purple { background:rgba(168,85,247,0.1); color:var(--neon-purple); }
+  .card-icon.pink { background:rgba(236,72,153,0.1); color:var(--neon-pink); }
+  .card-icon.gold { background:rgba(245,158,11,0.1); color:var(--neon-gold); }
+  .card h3 { font-size:1.25rem; margin-bottom:12px; font-weight:600; }
+  .card p { color:var(--text-secondary); line-height:1.7; font-size:0.95rem; }
+
+  /* ===== 展示区 ===== */
+  .showcase {
+    display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;
+  }
+  .showcase-image {
+    width:100%; aspect-ratio:4/3; border-radius:24px;
+    background: linear-gradient(135deg, rgba(0,240,255,0.06) 0%, rgba(168,85,247,0.06) 50%, rgba(236,72,153,0.06) 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .showcase-image .orbit-ring {
+    position:absolute; border-radius:50%;
+    border:1px solid rgba(168,85,247,0.15);
+    animation: spin 20s linear infinite;
+  }
+  .showcase-image .orbit-ring:nth-child(1) { width:70%; height:70%; }
+  .showcase-image .orbit-ring:nth-child(2) { width:50%; height:50%; animation-duration:15s; animation-direction:reverse; }
+  .showcase-image .orbit-ring:nth-child(3) { width:30%; height:30%; animation-duration:10s; }
+  .showcase-image .core {
+    width:16px; height:16px; border-radius:50%;
+    background: var(--neon-purple);
+    box-shadow: 0 0 30px rgba(168,85,247,0.6), 0 0 60px rgba(168,85,247,0.3);
+  }
+  @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+  .showcase-info h3 { font-size:1.8rem; margin-bottom:16px; }
+  .showcase-info p { color:var(--text-secondary); line-height:1.8; margin-bottom:24px; }
+  .feature-list { list-style:none; }
+  .feature-list li {
+    padding: 10px 0; color:var(--text-secondary);
+    display:flex; align-items:center; gap:12px;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .feature-list li::before {
+    content:''; width:6px; height:6px; border-radius:50%;
+    background: var(--neon-cyan); flex-shrink:0;
   }
 
-  .card h3 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.3rem;
-    margin-bottom: 0.8rem;
-    font-weight: 500;
+  /* ===== 统计区 ===== */
+  .stats-row {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:24px;
+    padding: 60px 0;
   }
-
-  .card p {
-    color: var(--text-muted);
-    font-size: 0.92rem;
-    line-height: 1.7;
+  .stat-item { text-align:center; }
+  .stat-value {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight:800;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom:8px;
   }
+  .stat-label { color:var(--text-secondary); font-size:0.85rem; letter-spacing:2px; text-transform:uppercase; }
 
-  /* ===== 时间线 ===== */
-  .timeline {
-    position: relative;
-    padding-left: 2rem;
+  /* ===== 页脚 ===== */
+  .footer {
+    text-align:center; padding:60px 40px;
+    border-top:1px solid rgba(255,255,255,0.04);
+    color:var(--text-secondary); font-size:0.85rem;
   }
-
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, transparent, var(--accent-2), var(--accent-1), var(--accent-3), transparent);
-  }
-
-  .timeline-item {
-    position: relative;
-    padding-bottom: 3rem;
-  }
-
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -2.35rem;
-    top: 0.3rem;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--bg-deep);
-    border: 2px solid var(--accent-2);
-    box-shadow: 0 0 12px var(--accent-2);
-  }
-
-  .timeline-date {
-    font-size: 0.78rem;
-    color: var(--accent-2);
-    letter-spacing: 2px;
-    margin-bottom: 0.5rem;
-  }
-
-  .timeline-item h4 {
-    font-size: 1.15rem;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-
-  .timeline-item p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-  }
-
-  /* ===== 引用区 ===== */
-  .quote-section {
-    text-align: center;
-    padding: 6rem 2rem;
-  }
-
-  .quote-mark {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 5rem;
-    line-height: 1;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .footer .glow-text {
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
-    opacity: 0.6;
   }
 
-  .quote-text {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 300;
-    line-height: 1.6;
-    max-width: 700px;
-    margin: 1rem auto 1.5rem;
-    color: var(--text-primary);
-  }
-
-  .quote-author {
-    color: var(--accent-2);
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-  }
-
-  /* ===== 数据区 ===== */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 2rem;
-    text-align: center;
-  }
-
-  .stat-item {
-    padding: 2rem 1rem;
-    border: 1px solid var(--card-border);
-    border-radius: 4px;
-    background: var(--card-bg);
-    transition: all 0.3s;
-  }
-
-  .stat-item:hover {
-    border-color: var(--accent-2);
-    background: rgba(142, 202, 230, 0.05);
-  }
-
-  .stat-number {
-    font-family: 'Outfit', sans-serif;
-    font-size: 2.8rem;
-    font-weight: 200;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-
-  .stat-label {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  /* ===== Footer ===== */
-  footer {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 3rem 2rem 2rem;
-    border-top: 1px solid var(--card-border);
-    margin-top: 4rem;
-  }
-
-  footer p {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    letter-spacing: 1px;
-  }
-
-  footer .heart {
-    color: var(--accent-3);
-    animation: pulse 2s infinite;
-    display: inline-block;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* ===== 滚动渐入 ===== */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
+  /* ===== 滚动动画 ===== */
+  .fade-up {
+    opacity:0; transform:translateY(40px);
     transition: opacity 0.8s ease, transform 0.8s ease;
   }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .fade-up.visible { opacity:1; transform:translateY(0); }
 
   /* ===== 响应式 ===== */
-  @media (max-width: 768px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { gap: 1.2rem; }
-    .nav-links a { font-size: 0.8rem; }
-    section { padding: 5rem 1.5rem; }
-    .hero-cta { flex-direction: column; align-items: center; }
+  @media (max-width:768px) {
+    .navbar { padding:12px 20px; }
+    .nav-links { gap:16px; }
+    .nav-links a { font-size:0.75rem; letter-spacing:0.5px; }
+    .hero { padding:100px 20px 60px; }
+    .section { padding:60px 20px; }
+    .showcase { grid-template-columns:1fr; }
+    .stats-row { grid-template-columns:repeat(2,1fr); gap:32px; }
+    .card-grid { grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
 
 <!-- 星空背景 -->
-<div class="starfield"></div>
-<div class="shooting-star"></div>
-<div class="shooting-star"></div>
-<div class="shooting-star"></div>
+<canvas id="starfield"></canvas>
 
-<!-- 导航 -->
-<nav>
-  <div class="logo">星河漫游</div>
+<!-- 导航栏 -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">NEBULA</div>
   <ul class="nav-links">
+    <li><a href="#explore">探索</a></li>
     <li><a href="#features">特性</a></li>
-    <li><a href="#journey">旅程</a></li>
     <li><a href="#stats">数据</a></li>
-    <li><a href="#quote">寄语</a></li>
+    <li><a href="#about">关于</a></li>
   </ul>
 </nav>
 
-<!-- Hero -->
-<div class="hero">
-  <div class="hero-tag">— Explore Beyond —</div>
-  <h1>穿越<span class="gradient-text">星河</span><br>遇见未知之美</h1>
-  <p>在无垠的夜空下，每一颗星辰都在讲述自己的故事。<br>这是一场关于光、暗与永恒的漫游。</p>
-  <div class="hero-cta">
-    <a href="#features" class="btn btn-primary">开始探索</a>
-    <a href="#quote" class="btn btn-ghost">了解更多</a>
-  </div>
-  <div class="scroll-hint">SCROLL</div>
+<div class="main-content">
+
+  <!-- 英雄区 -->
+  <section class="hero" id="hero">
+    <div class="hero-badge">✦ COSMIC FRONTIER 2026</div>
+    <h1 class="hero-title">
+      <span class="line1">跨越星辰大海</span>
+      <span class="line2">探索无限可能</span>
+    </h1>
+    <p class="hero-subtitle">
+      以尖端科技为翼，穿梭于浩瀚宇宙之间。每一次探索，都是人类文明向未知疆域迈出的坚实一步。
+    </p>
+    <div class="hero-cta">
+      <a href="#explore" class="btn-primary">开始探索</a>
+      <a href="#about" class="btn-outline">了解更多</a>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-mouse"><div class="scroll-dot"></div></div>
+      <span>SCROLL</span>
+    </div>
+  </section>
+
+  <!-- 探索区 -->
+  <section class="section fade-up" id="explore">
+    <div class="section-label">✦ 探索发现</div>
+    <h2 class="section-title">深空探测任务</h2>
+    <p class="section-desc">我们正在执行多项前所未有的深空探测任务，将人类足迹延伸至太阳系边缘乃至更远的星际空间。</p>
+    <div class="showcase">
+      <div class="showcase-image">
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring"></div>
+        <div class="core"></div>
+      </div>
+      <div class="showcase-info">
+        <h3>开普勒-442b 宜居带探测</h3>
+        <p>距离地球约 1,200 光年，这颗超级地球位于其恒星的宜居带内，大气成分分析显示存在液态水的可能性高达 97%。</p>
+        <ul class="feature-list">
+          <li>光谱分析确认富氧大气层</li>
+          <li>表面温度区间 -20°C ~ 15°C</li>
+          <li>公转周期 112.3 个地球日</li>
+          <li>质量约为地球的 2.36 倍</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 特性卡片区 -->
+  <section class="section fade-up" id="features">
+    <div class="section-label">✦ 核心技术</div>
+    <h2 class="section-title">驱动未来的引擎</h2>
+    <p class="section-desc">从量子计算到离子推进，每一项突破性技术都在重新定义人类对宇宙的认知边界。</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon cyan">&#9670;</div>
+        <h3>量子导航系统</h3>
+        <p>基于量子纠缠原理的高精度星际导航，在深空环境中实现亚米级定位精度，摆脱传统星图导航的限制。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon purple">&#9830;</div>
+        <h3>离子推进引擎</h3>
+        <p>第五代氙离子推进器，比冲高达 12,000 秒，连续推力模式下可实现 0.1c 巡航速度，大幅缩短星际航行时间。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon pink">&#9826;</div>
+        <h3>生命维持生态舱</h3>
+        <p>全封闭生物圈循环系统，支持 50 人长期深空生存，水与氧气回收率达 99.7%，食物自给率超过 85%。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon gold">&#9812;</div>
+        <h3>暗能量通讯阵列</h3>
+        <p>利用暗能量场调制的超光速通讯技术，跨越数千光年的信息传递延迟降低至分钟级别，让星际对话成为现实。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 统计数据区 -->
+  <section class="section fade-up" id="stats">
+    <div class="section-label">✦ 任务数据</div>
+    <h2 class="section-title">以数字丈量宇宙</h2>
+    <p class="section-desc">每一个数字背后，都是无数科研人员日夜奋战的成果。</p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-value" data-target="247">0</div>
+        <div class="stat-label">已完成任务</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" data-target="36">0</div>
+        <div class="stat-label">在轨探测器</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" data-target="12">0</div>
+        <div class="stat-label">合作国家</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" data-target="98">0</div>
+        <div class="stat-label">成功率 %</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 关于区 -->
+  <section class="section fade-up" id="about" style="text-align:center;">
+    <div class="section-label">✦ 加入我们</div>
+    <h2 class="section-title">成为星际探索者</h2>
+    <p class="section-desc" style="margin:0 auto 48px;">
+      无论你是科学家、工程师、还是怀揣星辰梦想的普通人，我们的征途都欢迎你的加入。
+    </p>
+    <a href="#" class="btn-primary" style="display:inline-block;">提交申请</a>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <p>Designed with <span class="glow-text">✦</span> by Nebula Collective &nbsp;|&nbsp; &copy; 2026 Cosmic Frontier. All rights reserved.</p>
+  </footer>
+
 </div>
 
-<!-- 特性卡片 -->
-<section id="features">
-  <div class="section-label reveal">FEATURES</div>
-  <h2 class="section-title reveal">三重<span class="gradient-text" style="background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">星域</span>之美</h2>
-  <p class="section-desc reveal">从微观到宏观，从瞬息到永恒——每一面都值得驻足。</p>
-
-  <div class="card-grid">
-    <div class="card reveal">
-      <div class="card-icon">🌌</div>
-      <h3>浩瀚星云</h3>
-      <p>气体与尘埃在引力中编织出绚烂的画卷，每一片星云都是恒星诞生的摇篮，是宇宙最古老的艺术家。</p>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">💫</div>
-      <h3>流光轨迹</h3>
-      <p>彗星划过天际，留下一瞬即逝的尾迹。那些穿越光年才抵达我们眼中的光，是时间最温柔的信使。</p>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">🪐</div>
-      <h3>行星之歌</h3>
-      <p>每一颗行星都有自己的轨道与韵律。它们在沉默中旋转，在黑暗中反射光芒，用亿万年的耐心谱写宇宙乐章。</p>
-    </div>
-  </div>
-</section>
-
-<!-- 时间线 -->
-<section id="journey">
-  <div class="section-label reveal">JOURNEY</div>
-  <h2 class="section-title reveal">星际<span style="background: linear-gradient(135deg, var(--accent-2), var(--accent-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">旅程</span></h2>
-  <p class="section-desc reveal">从第一步到光年之外，每一步都是新的开始。</p>
-
-  <div class="timeline">
-    <div class="timeline-item reveal">
-      <div class="timeline-date">1957 · 启程</div>
-      <h4>第一颗人造卫星升空</h4>
-      <p>斯普特尼克1号在拜科努尔发射场升空，人类第一次将自己造的物送入了轨道。那声"嘀嘀"声，是地球之外的第一个音符。</p>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-date">1969 · 足迹</div>
-      <h4>人类首次踏足月球</h4>
-      <p>"这是个人的一小步，却是人类的一大步。"阿姆斯特朗的脚印至今仍在月球的尘土中——那里没有风来抹去它们。</p>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-date">1977 · 远行</div>
-      <h4>旅行者号启程</h4>
-      <p>旅行者1号和2号携带着金唱片飞向星际空间。唱片里有地球的声音——风声、雨声、婴儿的哭声，还有一句用55种语言说的"你好"。</p>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-date">2021 · 凝视</div>
-      <h4>韦伯望远镜睁开双眼</h4>
-      <p>人类有史以来最强大的太空望远镜在拉格朗日点展开金色镜面，开始捕捉134亿年前的光——那是宇宙婴儿时期的模样。</p>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-date">未来 · 无限</div>
-      <h4>等待被书写的故事</h4>
-      <p>也许有一天，我们能在火星上看到日落，在木卫二的冰下发现生命。星辰大海不是终点，而是永恒的邀请。</p>
-    </div>
-  </div>
-</section>
-
-<!-- 数据 -->
-<section id="stats">
-  <div class="section-label reveal">SCALE</div>
-  <h2 class="section-title reveal">宇宙<span style="background: linear-gradient(135deg, var(--accent-3), var(--accent-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">之数</span></h2>
-  <p class="section-desc reveal">数字是理解宇宙最谦卑的方式——它们提醒我们，自己有多渺小。</p>
-
-  <div class="stats-grid">
-    <div class="stat-item reveal">
-      <div class="stat-number" data-target="100" data-suffix="B+">0</div>
-      <div class="stat-label">银河系恒星数</div>
-    </div>
-    <div class="stat-item reveal">
-      <div class="stat-number" data-target="93" data-suffix="B ly">0</div>
-      <div class="stat-label">可观测宇宙直径</div>
-    </div>
-    <div class="stat-item reveal">
-      <div class="stat-number" data-target="13.8" data-suffix="B yr">0</div>
-      <div class="stat-label">宇宙年龄</div>
-    </div>
-    <div class="stat-item reveal">
-      <div class="stat-number" data-target="2T+" data-suffix="">0</div>
-      <div class="stat-label">星系总数</div>
-    </div>
-  </div>
-</section>
-
-<!-- 引用 -->
-<section id="quote" class="quote-section">
-  <div class="quote-mark reveal">"</div>
-  <p class="quote-text reveal">我们都是星尘做的。<br>组成你身体的每一个原子，都曾在一颗恒星的中心被锻造。<br>当你仰望星空，那是宇宙在凝视自己。</p>
-  <div class="quote-author reveal">— Carl Sagan</div>
-</section>
-
-<!-- Footer -->
-<footer>
-  <p>Made with <span class="heart">♥</span> · 星河漫游 · 2026</p>
-  <p style="margin-top: 0.5rem; opacity: 0.5;">在浩瀚宇宙中，我们是彼此最近的星辰。</p>
-</footer>
-
 <script>
-  // 滚动渐入
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 100);
-      }
-    });
-  }, { threshold: 0.15 });
+// ===== 星空粒子背景 =====
+(function() {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let w, h;
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
 
-  // 数字递增动画
-  const animateNumber = (el) => {
-    const target = parseFloat(el.dataset.target);
-    const suffix = el.dataset.suffix || '';
-    const isFloat = target % 1 !== 0;
-    const isText = isNaN(target);
-
-    if (isText) {
-      el.textContent = target + suffix;
-      return;
+  function createStars() {
+    const count = Math.floor((w * h) / 1200);
+    stars = [];
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.8 + 0.3,
+        speed: Math.random() * 0.3 + 0.05,
+        opacity: Math.random(),
+        opacitySpeed: (Math.random() - 0.5) * 0.008,
+        color: Math.random() < 0.08
+          ? (Math.random() < 0.5 ? '168,85,247' : '0,240,255')
+          : '255,255,255'
+      });
     }
+  }
 
-    let current = 0;
-    const duration = 2000;
-    const steps = 60;
-    const increment = target / steps;
-    const interval = duration / steps;
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    stars.forEach(s => {
+      s.opacity += s.opacitySpeed;
+      if (s.opacity > 1) { s.opacity = 1; s.opacitySpeed *= -1; }
+      if (s.opacity < 0.15) { s.opacity = 0.15; s.opacitySpeed *= -1; }
+      s.y += s.speed;
+      if (s.y > h + 5) { s.y = -5; s.x = Math.random() * w; }
 
-    const update = () => {
-      current += increment;
-      if (current >= target) {
-        el.textContent = (isFloat ? target.toFixed(1) : Math.floor(target)) + suffix;
-      } else {
-        el.textContent = (isFloat ? current.toFixed(1) : Math.floor(current)) + suffix;
-        requestAnimationFrame(update);
-      }
-    };
-    update();
-  };
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${s.color},${s.opacity})`;
+      ctx.fill();
 
-  const statObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateNumber(entry.target);
-        statObserver.unobserve(entry.target);
+      // 亮星加辉光
+      if (s.r > 1.2 && s.opacity > 0.6) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${s.color},${s.opacity * 0.08})`;
+        ctx.fill();
       }
     });
-  }, { threshold: 0.5 });
+    requestAnimationFrame(draw);
+  }
 
-  document.querySelectorAll('.stat-number').forEach(el => statObserver.observe(el));
+  resize();
+  createStars();
+  draw();
+  window.addEventListener('resize', () => { resize(); createStars(); });
+})();
+
+// ===== 导航栏滚动效果 =====
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ===== 滚动渐入动画 =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ===== 数字滚动动画 =====
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const duration = 2000;
+      const start = performance.now();
+
+      function animate(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // ease-out
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(target * eased);
+        if (progress < 1) requestAnimationFrame(animate);
+        else el.textContent = target;
+      }
+
+      requestAnimationFrame(animate);
+      statObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-value').forEach(el => statObserver.observe(el));
+
+// ===== 平滑滚动 =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
 </script>
 
 </body>
